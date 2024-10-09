@@ -129,6 +129,10 @@ BoolParameter remoteResize("RemoteResize",
                            "the size of the local client window changes. "
                            "(Does not work with all servers)", true);
 
+BoolParameter darkMode("DarkMode",
+                       "Use dark mode as UI theme",
+                       false);
+
 BoolParameter viewOnly("ViewOnly",
                        "Don't send any mouse or keyboard events to the server",
                        false);
@@ -196,6 +200,8 @@ static VoidParameter* parameterArray[] = {
   &fullScreen,
   &fullScreenMode,
   &fullScreenSelectedMonitors,
+  /* Theme */
+  &darkMode,
   /* Input */
   &viewOnly,
   &emulateMiddleButton,

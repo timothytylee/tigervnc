@@ -68,6 +68,8 @@ protected:
 
   static void handleFullScreenMode(Fl_Widget *widget, void *data);
 
+  static void handleDarkMode(Fl_Widget *widget, void *data);
+
   static void handleCancel(Fl_Widget *widget, void *data);
   static void handleOK(Fl_Widget *widget, void *data);
 
@@ -136,6 +138,8 @@ protected:
   Fl_Round_Button *allMonitorsButton;
   Fl_Round_Button *selectedMonitorsButton;
   Fl_Monitor_Arrangement *monitorArrangement;
+  Fl_Group *themeGroup;
+  Fl_Check_Button *darkModeCheckbox;
 
   /* Misc. */
   Fl_Check_Button *sharedCheckbox;

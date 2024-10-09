@@ -40,6 +40,7 @@
 #include "parameters.h"
 
 #include "fltk/layout.h"
+#include "fltk/theme.h"
 #include "fltk/util.h"
 #include "fltk/Fl_Monitor_Arrangement.h"
 #include "fltk/Fl_Navigation.h"
@@ -349,6 +350,9 @@ void OptionsDialog::loadOptions(void)
 
   handleFullScreenMode(selectedMonitorsButton, this);
 
+  /* Theme */
+  darkModeCheckbox->value(darkMode);
+
   /* Misc. */
   sharedCheckbox->value(shared);
   reconnectCheckbox->value(reconnectOnError);
@@ -482,6 +486,9 @@ void OptionsDialog::storeOptions(void)
   }
 
   fullScreenSelectedMonitors.setParam(monitorArrangement->value());
+
+  /* Theme */
+  darkMode.setParam(darkModeCheckbox->value());
 
   /* Misc. */
   shared.setParam(sharedCheckbox->value());
@@ -1020,6 +1027,35 @@ void OptionsDialog::createDisplayPage(int tx, int ty, int tw, int th)
   ty += INNER_MARGIN;
   width = tw - OUTER_MARGIN * 2;
 
+  /* Theme */
+  ty += GROUP_LABEL_OFFSET;
+  themeGroup = new Fl_Group(tx, ty, width, 0, _("Theme"));
+  themeGroup->labelfont(FL_BOLD);
+  themeGroup->box(FL_FLAT_BOX);
+  themeGroup->align(FL_ALIGN_LEFT | FL_ALIGN_TOP);
+
+  {
+    tx += INDENT;
+    ty += TIGHT_MARGIN;
+
+    darkModeCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
+                                                    CHECK_MIN_WIDTH,
+                                                    CHECK_HEIGHT,
+                                                  _("Use dark mode")));
+    darkModeCheckbox->callback(handleDarkMode, this);
+    ty += CHECK_HEIGHT + TIGHT_MARGIN;
+  }
+  ty -= TIGHT_MARGIN;
+
+  themeGroup->end();
+  /* Needed for resize to work sanely */
+  themeGroup->resizable(nullptr);
+  themeGroup->size(themeGroup->w(), ty - themeGroup->y());
+
+  /* Back to normal */
+  tx = orig_tx;
+  ty += INNER_MARGIN;
+
   group->end();
 }
 
@@ -1138,6 +1174,16 @@ void OptionsDialog::handleFullScreenMode(Fl_Widget* /*widget*/, void *data)
   } else {
     dialog->monitorArrangement->deactivate();
   }
+}
+
+void OptionsDialog::handleDarkMode(Fl_Widget* /*widget*/, void *data)
+{
+  OptionsDialog *dialog = (OptionsDialog*)data;
+
+  // Update FLTK theme and redraw all windows
+  init_theme(dialog->darkModeCheckbox->value());
+  for (Fl_Window* wnd = Fl::first_window();  wnd;  wnd = Fl::next_window(wnd))
+    wnd->redraw();
 }
 
 void OptionsDialog::handleCancel(Fl_Widget* /*widget*/, void *data)
